@@ -30,13 +30,13 @@ namespace P4U2Mod
                 bbdlFile.versions.Add(v);
 
                 var files = Directory.EnumerateFiles(dir, "*.*", SearchOption.AllDirectories);
-                Regex rgxPath = new Regex(@"(data\\.*)");
+                Regex rgxPath = new Regex(@"(ver_...\\.*)");
 
                 foreach (var file in files)
                 {
                     BBDLFileListing fl = new BBDLFileListing
                     {
-                        path = rgxPath.Match(file).Value,
+                        path = rgxPath.Match(file).Value.Substring(8),
                         size = (uint)new FileInfo(file).Length,
                         checksum = calcFileChecksums ? Util.ChecksumUInt32BE(file) : 0
                     };
@@ -53,10 +53,6 @@ namespace P4U2Mod
                 bbdlFile.header.total_file_size += v.ver_file_size;
                 bbdlFile.header.version_count++;
             }
-
-            var catPath = Path.Combine(updDirPath, "catalog_env.info");
-            bbdlFile.catalog.checksum = Util.ChecksumUInt32BE(catPath);
-            bbdlFile.catalog.size = (uint) new FileInfo(catPath).Length;
 
             bbdlFile.header.checksum = bbdlFile.Checksum();
             bbdlFile.header.rounded_size = bbdlFile.SizeOf / 0x0f * 0x0f;

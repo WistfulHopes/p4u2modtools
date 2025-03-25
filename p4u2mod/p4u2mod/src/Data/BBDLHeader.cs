@@ -8,8 +8,8 @@ namespace P4U2Mod
         public string type = "BBDL";
 
         // unknown, probably size of header
-        private uint unk0 = 0x30;
-
+        private uint header_size = 0x30;
+        
         // current version index
         public uint version_count = 0;
 
@@ -26,7 +26,7 @@ namespace P4U2Mod
         public uint total_file_size = 0;
 
         // unknown
-        private uint unk2 = 0x03;
+        private uint unk2 = 0x01;
 
         // checksum of this file (without the header)
         public uint checksum = 0;
@@ -36,7 +36,7 @@ namespace P4U2Mod
         public BBDLHeader Read(BBDLReader r)
         {
             type = new string(r.ReadChars(0x4));
-            unk0 = r.ReadUInt32();
+            header_size = r.ReadUInt32();
 
             r.BaseStream.Seek(0x04, SeekOrigin.Current);
 
@@ -56,7 +56,7 @@ namespace P4U2Mod
         public void Write(BBDLWriter w)
         {
             w.Write(type.ToCharArray());
-            w.Write(unk0);
+            w.Write(header_size);
 
             w.Seek(0x04, SeekOrigin.Current);
 
